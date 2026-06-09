@@ -313,7 +313,8 @@ h2 {
   padding: 10px;
 }
 
-.menu-admin-item img {
+.menu-admin-item img,
+.menu-admin-item .img-placeholder {
   aspect-ratio: 1;
   border-radius: 8px;
   object-fit: cover;
@@ -656,7 +657,8 @@ h2 {
   padding: 10px 14px;
 }
 
-.menu-manager-item img {
+.menu-manager-item img,
+.menu-manager-item .img-placeholder {
   aspect-ratio: 1;
   border-radius: 6px;
   object-fit: cover;
@@ -860,11 +862,19 @@ h2 {
   position: relative;
 }
 
-.menu-card-img-wrap img {
+.menu-card-img-wrap img,
+.menu-card-img-wrap .img-placeholder {
+  background: #efede8;
   display: block;
   height: 100%;
   object-fit: cover;
   width: 100%;
+}
+
+.img-placeholder {
+  background: #efede8;
+  display: inline-block;
+  min-height: 40px;
 }
 
 .discount-badge {

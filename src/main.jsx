@@ -180,6 +180,12 @@ function optimizedImage(url, width = 900) {
   return path ? `${baseUrl}/${path}` : url;
 }
 
+function Img({ src, ...props }) {
+  const [error, setError] = useState(false);
+  if (!src || error) return <span className="img-placeholder" {...props} />;
+  return <img src={src} onError={() => setError(true)} {...props} />;
+}
+
 function toHex(buffer) {
   return [...new Uint8Array(buffer)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
@@ -737,7 +743,7 @@ function AdminDashboard({ restaurant, setRestaurant, menuItems, setMenuItems, ca
             <p className="empty-state">Menu is empty. Add your first menu item above.</p>
           ) : menuItems.map((item) => (
             <article className="menu-admin-item" key={item.id}>
-              <img src={optimizedImage(item.image_url, 220)} alt="" />
+              <Img src={optimizedImage(item.image_url, 220)} alt="" />
               <div>
                 <h3>{item.name}</h3>
                 <p>{item.category} · {money(item.price, restaurant.currency)} · {item.discount_percent || 0}% off</p>
@@ -1087,7 +1093,7 @@ function CustomerMenu({ restaurant, menuItems, categories, addOrder, notify, ses
           {visibleItems.map((item) => (
             <article className="menu-card" key={item.id}>
               <div className="menu-card-img-wrap">
-                <img src={optimizedImage(item.image_url, 360)} alt="" />
+                <Img src={optimizedImage(item.image_url, 360)} alt="" />
                 {item.discount_percent > 0 && <span className="discount-badge">-{item.discount_percent}%</span>}
               </div>
               <div className="menu-card-body">
@@ -1176,6 +1182,7 @@ function MenuManager({ restaurant, menuItems, setMenuItems, categories, setCateg
       return;
     }
     const next = { ...draftItem, restaurant_id: restaurant.id, price: Number(draftItem.price || 0), discount_percent: Number(draftItem.discount_percent || 0) };
+    console.log('Saving item with image_url:', next.image_url);
     if (editingId) {
       setMenuItems((current) => current.map((item) => (item.id === editingId ? next : item)));
       if (hasSupabase) {
@@ -1192,6 +1199,7 @@ function MenuManager({ restaurant, menuItems, setMenuItems, categories, setCateg
           notify(error.message);
           return;
         }
+        console.log('Insert response image_url:', data?.image_url);
         setMenuItems((current) => [data, ...current]);
       } else {
         const item = { ...next, id: uid('menu') };
@@ -1303,7 +1311,7 @@ function MenuManager({ restaurant, menuItems, setMenuItems, categories, setCateg
           <p className="empty-state">{search || categoryFilter !== 'All' ? 'No items match your search.' : 'Menu is empty. Add your first item.'}</p>
         ) : filteredItems.map((item) => (
           <article className="menu-manager-item" key={item.id}>
-            <img src={optimizedImage(item.image_url, 120)} alt="" />
+            <Img src={optimizedImage(item.image_url, 120)} alt="" />
             <div className="menu-manager-item-info">
               <h3>{item.name}</h3>
               <p>{item.category} &middot; {money(item.price, restaurant.currency)}{item.discount_percent ? ` · ${item.discount_percent}% off` : ''}</p>
