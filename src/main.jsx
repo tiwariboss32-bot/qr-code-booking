@@ -219,6 +219,8 @@ async function uploadToImageKit(file, folder) {
   });
   const result = await uploadResponse.json();
   if (!uploadResponse.ok) {
+    console.error('ImageKit error:', result);
+    console.debug('Signature debug:', { token, expire, signature, keyPreview: imageKitPrivateKey.slice(0, 10) + '…' });
     throw new Error(result.message || 'ImageKit upload failed.');
   }
   return result.url || `${imageKitUrlEndpoint}${result.filePath}`;
