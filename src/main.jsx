@@ -180,10 +180,10 @@ function optimizedImage(url, width = 900) {
   return path ? `${baseUrl}/${path}` : url;
 }
 
-function Img({ src, ...props }) {
+function Img({ src, alt, ...props }) {
   const [error, setError] = useState(false);
-  if (!src || error) return <span className="img-placeholder" {...props} />;
-  return <img src={src} onError={() => setError(true)} {...props} />;
+  if (!src || error) return <span className="img-placeholder" role="img" aria-label={alt || ''} {...props} />;
+  return <img src={src} alt={alt || ''} onError={() => setError(true)} {...props} />;
 }
 
 function toHex(buffer) {
@@ -268,6 +268,17 @@ function App() {
   const [allRestaurants, setAllRestaurants] = useState([]);
   const [toast, setToast] = useState('');
   const [showAuth, setShowAuth] = useState(false);
+
+  useEffect(() => {
+    const titles = { dashboard: 'Dashboard', menu: 'Menu Manager', kitchen: 'Kitchen Board', qr: 'QR Codes' };
+    if (customerRoute) {
+      document.title = `${restaurant.name || 'Menu'} | QR Dine-In Ordering`;
+    } else if (view === 'dashboard') {
+      document.title = 'Dashboard | QR Dine-In Ordering';
+    } else {
+      document.title = `${titles[view] || 'Admin'} | QR Dine-In Ordering`;
+    }
+  }, [view, customerRoute, restaurant.name]);
 
   useEffect(() => {
     if (!hasSupabase) return;
@@ -743,7 +754,7 @@ function AdminDashboard({ restaurant, setRestaurant, menuItems, setMenuItems, ca
             <p className="empty-state">Menu is empty. Add your first menu item above.</p>
           ) : menuItems.map((item) => (
             <article className="menu-admin-item" key={item.id}>
-              <Img src={optimizedImage(item.image_url, 220)} alt="" />
+              <Img src={optimizedImage(item.image_url, 220)} alt={item.name} />
               <div>
                 <h3>{item.name}</h3>
                 <p>{item.category} · {money(item.price, restaurant.currency)} · {item.discount_percent || 0}% off</p>
@@ -751,8 +762,8 @@ function AdminDashboard({ restaurant, setRestaurant, menuItems, setMenuItems, ca
               <button className={item.is_available ? 'stock on' : 'stock'} onClick={() => toggleItem(item.id)}>
                 {item.is_available ? 'In stock' : 'Out'}
               </button>
-              <button onClick={() => editItem(item)} title="Edit"><Eye size={17} /></button>
-              <button onClick={() => deleteItem(item.id)} title="Delete"><Trash2 size={17} /></button>
+              <button onClick={() => editItem(item)} aria-label="Edit item"><Eye size={17} /></button>
+              <button onClick={() => deleteItem(item.id)} aria-label="Delete item"><Trash2 size={17} /></button>
             </article>
           ))}
         </div>
@@ -1069,7 +1080,7 @@ function CustomerMenu({ restaurant, menuItems, categories, addOrder, notify, ses
           <button className="primary" onClick={downloadReceipt}><Download size={18} /> Download PDF bill</button>
           <div className="email-capture">
             <input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email for receipt" type="email" />
-            <button onClick={saveEmail}><Mail size={18} /></button>
+            <button onClick={saveEmail} aria-label="Save receipt email"><Mail size={18} /></button>
           </div>
           <p className="bill-backlink">Powered by QR-Booking. For enterprise-grade catering and tiffin management systems, visit <a href="https://www.cubeonebiz.com/fooddialer/fooddialer.php" target="_blank" rel="noopener noreferrer">FoodDialer.com</a>.</p>
         </section>
@@ -1100,7 +1111,7 @@ function CustomerMenu({ restaurant, menuItems, categories, addOrder, notify, ses
           {visibleItems.map((item) => (
             <article className="menu-card" key={item.id}>
               <div className="menu-card-img-wrap">
-                <Img src={optimizedImage(item.image_url, 360)} alt="" />
+                <Img src={optimizedImage(item.image_url, 360)} alt={item.name} />
                 {item.discount_percent > 0 && <span className="discount-badge">-{item.discount_percent}%</span>}
               </div>
               <div className="menu-card-body">
@@ -1110,9 +1121,9 @@ function CustomerMenu({ restaurant, menuItems, categories, addOrder, notify, ses
                 </div>
                 <p>{item.description}</p>
                 <div className="cart-stepper">
-                  <button onClick={() => adjustCart(item.id, -1)}><Minus size={16} /></button>
+                  <button onClick={() => adjustCart(item.id, -1)} aria-label="Decrease quantity"><Minus size={16} /></button>
                   <span>{cart[item.id] || 0}</span>
-                  <button onClick={() => adjustCart(item.id, 1)}><Plus size={16} /></button>
+                  <button onClick={() => adjustCart(item.id, 1)} aria-label="Increase quantity"><Plus size={16} /></button>
                 </div>
               </div>
             </article>
@@ -1318,7 +1329,7 @@ function MenuManager({ restaurant, menuItems, setMenuItems, categories, setCateg
           <p className="empty-state">{search || categoryFilter !== 'All' ? 'No items match your search.' : 'Menu is empty. Add your first item.'}</p>
         ) : filteredItems.map((item) => (
           <article className="menu-manager-item" key={item.id}>
-            <Img src={optimizedImage(item.image_url, 120)} alt="" />
+            <Img src={optimizedImage(item.image_url, 120)} alt={item.name} />
             <div className="menu-manager-item-info">
               <h3>{item.name}</h3>
               <p>{item.category} &middot; {money(item.price, restaurant.currency)}{item.discount_percent ? ` · ${item.discount_percent}% off` : ''}</p>
@@ -1327,8 +1338,8 @@ function MenuManager({ restaurant, menuItems, setMenuItems, categories, setCateg
               <button className={item.is_available ? 'stock on' : 'stock'} onClick={() => toggleItem(item.id)}>
                 {item.is_available ? 'In stock' : 'Out'}
               </button>
-              <button onClick={() => editItem(item)} title="Edit"><Eye size={17} /></button>
-              <button onClick={() => deleteItem(item.id)} title="Delete"><Trash2 size={17} /></button>
+              <button onClick={() => editItem(item)} aria-label="Edit item"><Eye size={17} /></button>
+              <button onClick={() => deleteItem(item.id)} aria-label="Delete item"><Trash2 size={17} /></button>
             </div>
           </article>
         ))}
