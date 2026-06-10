@@ -757,6 +757,9 @@ function AdminDashboard({ restaurant, setRestaurant, menuItems, setMenuItems, ca
           ))}
         </div>
       </section>
+      <div className="upsell-footer">
+        <p>Running a growing kitchen? Upgrade to <strong>FoodDialer</strong> to manage advanced meal subscriptions, automated delivery tracking, and full inventory logistics. <a href="https://www.cubeonebiz.com/fooddialer/fooddialer.php" target="_blank" rel="noopener noreferrer">Explore Premium Features ➔</a></p>
+      </div>
     </main>
   );
 }
@@ -805,6 +808,9 @@ function KitchenBoard({ restaurant, orders, updateOrderStatus }) {
             </div>
           </article>
         ))}
+      </div>
+      <div className="upsell-footer">
+        <p>Running a growing kitchen? Upgrade to <strong>FoodDialer</strong> to manage advanced meal subscriptions, automated delivery tracking, and full inventory logistics. <a href="https://www.cubeonebiz.com/fooddialer/fooddialer.php" target="_blank" rel="noopener noreferrer">Explore Premium Features ➔</a></p>
       </div>
     </main>
   );
@@ -1065,6 +1071,7 @@ function CustomerMenu({ restaurant, menuItems, categories, addOrder, notify, ses
             <input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email for receipt" type="email" />
             <button onClick={saveEmail}><Mail size={18} /></button>
           </div>
+          <p className="bill-backlink">Powered by QR-Booking. For enterprise-grade catering and tiffin management systems, visit <a href="https://www.cubeonebiz.com/fooddialer/fooddialer.php" target="_blank" rel="noopener noreferrer">FoodDialer.com</a>.</p>
         </section>
       </main>
     );
